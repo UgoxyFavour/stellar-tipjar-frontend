@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterDropdown, type FilterOption } from "@/components/FilterDropdown";
+import { Pagination } from "@/components/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
 import { useSearchParams } from "@/hooks/useSearchParams";
 
 interface Creator {
@@ -21,6 +23,25 @@ const creatorExamples: Creator[] = [
   { username: "community-lab", displayName: "Community Lab", category: "community", followers: 2100 },
   { username: "crypto-artist", displayName: "Crypto Artist", category: "art", followers: 1800 },
   { username: "blockchain-edu", displayName: "Blockchain Edu", category: "education", followers: 2900 },
+  { username: "nft-creator", displayName: "NFT Creator", category: "art", followers: 4200 },
+  { username: "defi-expert", displayName: "DeFi Expert", category: "tech", followers: 3100 },
+  { username: "web3-builder", displayName: "Web3 Builder", category: "tech", followers: 2700 },
+  { username: "dao-organizer", displayName: "DAO Organizer", category: "community", followers: 1950 },
+  { username: "smart-contract-dev", displayName: "Smart Contract Dev", category: "tech", followers: 3800 },
+  { username: "digital-artist", displayName: "Digital Artist", category: "art", followers: 2300 },
+  { username: "crypto-educator", displayName: "Crypto Educator", category: "education", followers: 3500 },
+  { username: "metaverse-architect", displayName: "Metaverse Architect", category: "tech", followers: 2800 },
+  { username: "token-designer", displayName: "Token Designer", category: "art", followers: 1600 },
+  { username: "blockchain-analyst", displayName: "Blockchain Analyst", category: "education", followers: 2400 },
+  { username: "community-manager", displayName: "Community Manager", category: "community", followers: 1750 },
+  { username: "protocol-dev", displayName: "Protocol Dev", category: "tech", followers: 4100 },
+  { username: "3d-artist", displayName: "3D Artist", category: "art", followers: 2200 },
+  { username: "crypto-writer", displayName: "Crypto Writer", category: "education", followers: 1900 },
+  { username: "gamefi-dev", displayName: "GameFi Dev", category: "tech", followers: 3300 },
+  { username: "generative-artist", displayName: "Generative Artist", category: "art", followers: 2600 },
+  { username: "web3-educator", displayName: "Web3 Educator", category: "education", followers: 2100 },
+  { username: "nft-collector", displayName: "NFT Collector", category: "community", followers: 1400 },
+  { username: "solidity-dev", displayName: "Solidity Dev", category: "tech", followers: 3900 },
 ];
 
 const categoryOptions: FilterOption[] = [
@@ -43,11 +64,24 @@ export default function ExplorePage() {
   const [search, setSearch] = useState(getSearchParam("search") || "");
   const [category, setCategory] = useState(getSearchParam("category") || "all");
   const [sort, setSort] = useState(getSearchParam("sort") || "popular");
+  const [page, setPage] = useState(Number(getSearchParam("page")) || 1);
+  const [pageSize, setPageSize] = useState(Number(getSearchParam("pageSize")) || 10);
   const [isLoading, setIsLoading] = useState(false);
   
   const debouncedSearch = useDebounce(search, 300);
 
   const [filteredCreators, setFilteredCreators] = useState<Creator[]>(creatorExamples);
+  
+  const pagination = usePagination({
+    totalItems: filteredCreators.length,
+    pageSize,
+    currentPage: page,
+  });
+
+  const paginatedCreators = filteredCreators.slice(
+    pagination.startIndex,
+    pagination.endIndex
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -79,6 +113,7 @@ export default function ExplorePage() {
       }
 
       setFilteredCreators(results);
+      setPage(1);
       setIsLoading(false);
     }, 100);
 
@@ -90,13 +125,32 @@ export default function ExplorePage() {
       search: search || null,
       category: category !== "all" ? category : null,
       sort: sort !== "popular" ? sort : null,
+      page: page > 1 ? String(page) : null,
+      pageSize: pageSize !== 10 ? String(pageSize) : null,
     });
-  }, [search, category, sort, setSearchParams]);
+  }, [search, category, sort, page, pageSize, setSearchParams]);
+
+  useEffect(() => {
+    if (page > pagination.totalPages && pagination.totalPages > 0) {
+      setPage(1);
+    }
+  }, [page, pagination.totalPages]);
 
   const handleClearFilters = () => {
     setSearch("");
     setCategory("all");
     setSort("popular");
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
   };
 
   const hasActiveFilters = search || category !== "all" || sort !== "popular";
@@ -153,7 +207,8 @@ export default function ExplorePage() {
             "Loading..."
           ) : (
             <>
-              {filteredCreators.length} {filteredCreators.length === 1 ? "creator" : "creators"} found
+              Showing {pagination.startIndex + 1}-{pagination.endIndex} of {filteredCreators.length}{" "}
+              {filteredCreators.length === 1 ? "creator" : "creators"}
             </>
           )}
         </p>
@@ -164,8 +219,9 @@ export default function ExplorePage() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-wave/20 border-t-wave" />
         </div>
       ) : filteredCreators.length > 0 ? (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredCreators.map((creator) => (
+        <>
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {paginatedCreators.map((creator) => (
             <li key={creator.username}>
               <Link
                 href={`/creator/${creator.username}`}
@@ -190,8 +246,20 @@ export default function ExplorePage() {
                 </div>
               </Link>
             </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+
+          <Pagination
+            currentPage={page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            pageSize={pageSize}
+            onPageSizeChange={handlePageSizeChange}
+            pageNumbers={pagination.pageNumbers}
+            hasNextPage={pagination.hasNextPage}
+            hasPrevPage={pagination.hasPrevPage}
+          />
+        </>
       ) : (
         <div className="rounded-2xl border border-ink/10 bg-[color:var(--surface)] p-12 text-center">
           <svg

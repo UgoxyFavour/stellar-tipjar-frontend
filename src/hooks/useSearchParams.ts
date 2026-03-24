@@ -25,7 +25,7 @@ export function useSearchParams() {
       
       router.push(url as never, { scroll: false });
     },
-    [pathname, router, searchParams]
+    [pathname, router]
   );
 
   const setSearchParams = useCallback(
@@ -45,14 +45,14 @@ export function useSearchParams() {
       
       router.push(url as never, { scroll: false });
     },
-    [pathname, router, searchParams]
+    [pathname, router]
   );
 
   const getSearchParam = useCallback(
     (key: string): string | null => {
       return searchParams.get(key);
     },
-    [searchParams]
+    []
   );
 
   return {
