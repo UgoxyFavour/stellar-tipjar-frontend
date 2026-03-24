@@ -22,19 +22,23 @@ export default function TipsPage() {
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-medium text-ink">
+          <label htmlFor="tips-username" className="text-sm font-medium text-ink">
             Creator Username
             <input
+              id="tips-username"
               disabled
               placeholder="alice"
+              aria-label="Creator username (coming soon)"
               className="mt-1 w-full rounded-xl border border-ink/20 bg-white px-3 py-2 text-sm text-ink/70"
             />
           </label>
-          <label className="text-sm font-medium text-ink">
+          <label htmlFor="tips-amount" className="text-sm font-medium text-ink">
             Amount
             <input
+              id="tips-amount"
               disabled
               placeholder="10"
+              aria-label="Tip amount (coming soon)"
               className="mt-1 w-full rounded-xl border border-ink/20 bg-white px-3 py-2 text-sm text-ink/70"
             />
           </label>
