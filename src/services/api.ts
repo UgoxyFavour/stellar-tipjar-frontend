@@ -115,7 +115,12 @@ async function executeFetch<T>(path: string, init?: RequestInit, throttleMs?: nu
     throw new Error(`API request failed: ${response.status} ${response.statusText}`);
   }
 
-  return response.json();
+
+return response.json() as Promise<T>;
+}
+
+export function getApiRateLimitState() {
+  return rateLimiter.getState();
 }
 
 /**
