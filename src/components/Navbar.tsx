@@ -8,6 +8,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore Creators" },
   { href: "/tips", label: "Send Tips" },
+  { href: "/widgets", label: "Widgets" },
 ] as const;
 
 export function Navbar() {
