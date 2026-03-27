@@ -52,17 +52,19 @@ export default function RootLayout({
         <PerformanceMonitor />
         <WalletProvider>
           <ReactQueryProvider>
-          <div className="min-h-screen">
-            <Navbar />
-            <main
-              id="main-content"
-              tabIndex={-1}
-              className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8 focus:outline-none"
-            >
-              <PageTransition>{children}</PageTransition>
-            </main>
-          </div>
-          <InstallPrompt />
+            <WebSocketProvider>
+              <div className="min-h-screen">
+                <Navbar />
+                <main
+                  id="main-content"
+                  tabIndex={-1}
+                  className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8 focus:outline-none"
+                >
+                  <PageTransition>{children}</PageTransition>
+                </main>
+              </div>
+              <InstallPrompt />
+            </WebSocketProvider>
           </ReactQueryProvider>
         </WalletProvider>
       </body>
