@@ -35,6 +35,16 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: getSecurityHeaders(),
       },
+      {
+        // iOS Universal Links — must be served as application/json
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+      {
+        // Android App Links — must be served as application/json
+        source: "/.well-known/assetlinks.json",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
     ];
   },
 };
