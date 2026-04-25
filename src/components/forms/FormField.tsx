@@ -1,51 +1,27 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
-type ValidationState = "default" | "error" | "success" | "warning";
-
-type FormFieldProps = {
-  id: string;
-  label: string;
-  helperText?: string;
-  errorText?: string;
-  validationState?: ValidationState;
-  disabled?: boolean;
+export interface FormFieldProps {
+  label?: string;
+  error?: string;
   children: ReactNode;
-};
+  className?: string;
+}
 
-const stateColorClasses: Record<ValidationState, string> = {
-  default: "text-gray-500",
-  success: "text-emerald-500",
-  warning: "text-amber-500",
-  error: "text-rose-500",
-};
-
-export function FormField({
-  id,
+export const FormField: React.FC<FormFieldProps> = ({
   label,
-  helperText,
-  errorText,
-  validationState = "default",
-  disabled = false,
+  error,
   children,
-}: FormFieldProps) {
-  const textColor = stateColorClasses[validationState];
-
+  className = '',
+}) => {
   return (
-    <div className="mb-4">
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
-        {label}
-      </label>
+    <div className={`relative ${className}`}>
       {children}
-      <div className="mt-1 min-h-[1.25rem] text-sm">
-        {errorText ? (
-          <span className="text-rose-500">{errorText}</span>
-        ) : helperText ? (
-          <span className={textColor}>{helperText}</span>
-        ) : (
-          <span className="text-transparent">&nbsp;</span>
-        )}
-      </div>
-      {disabled && <p className="mt-1 text-xs text-slate-400">Disabled</p>}
+      {label && (
+        <label className="absolute left-4 -top-2.5 bg-white px-1 text-sm text-gray-600 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm transition-all pointer-events-none">
+          {label}
+        </label>
+      )}
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
-}
+};
