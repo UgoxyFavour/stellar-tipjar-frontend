@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/Button";
+import { ShareButton } from "@/components/ShareButton";
 import { ReportButton } from "@/components/ReportButton";
 import { ReportButton } from "@/components/ReportButton";
 import { TipForm } from "@/components/forms/TipForm";
