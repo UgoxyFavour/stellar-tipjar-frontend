@@ -51,6 +51,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore Creators" },
   { href: "/tips", label: "Send Tips" },
+  { href: "/stream", label: "Live Stream" },
   { href: "/widgets", label: "Widgets" },
 ] as const;
 
