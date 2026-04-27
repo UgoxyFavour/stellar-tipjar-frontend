@@ -10,6 +10,7 @@ export interface CardHeaderProps {
   actions?: ReactNode;
   children?: ReactNode;
   className?: string;
+  bordered?: boolean;
 }
 
 export function CardHeader({
@@ -20,18 +21,35 @@ export function CardHeader({
   actions,
   children,
   className = "",
+  bordered = false,
 }: CardHeaderProps) {
   if (children) {
     return (
-      <div className={`flex items-center justify-between mb-4 ${className}`}>
+      <div 
+        className={[
+          "flex items-center justify-between mb-4",
+          bordered && "pb-4 border-b border-gray-200 dark:border-gray-700",
+          className,
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         {children}
       </div>
     );
   }
 
   return (
-    <div className={`flex items-center justify-between mb-4 ${className}`}>
-      <div className="flex items-center gap-3">
+    <div 
+      className={[
+        "flex items-center justify-between mb-4",
+        bordered && "pb-4 border-b border-gray-200 dark:border-gray-700",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div className="flex items-center gap-3 min-w-0 flex-1">
         {(icon || avatar) && (
           <div className="flex-shrink-0">
             {avatar || (
@@ -54,7 +72,7 @@ export function CardHeader({
           )}
         </div>
       </div>
-      {actions && <div className="flex-shrink-0">{actions}</div>}
+      {actions && <div className="flex-shrink-0 ml-3">{actions}</div>}
     </div>
   );
 }

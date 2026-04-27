@@ -7,10 +7,13 @@ import { CardBody } from "./CardBody";
 import { CardFooter } from "./CardFooter";
 import { ImageCard } from "./ImageCard";
 import { InteractiveCard } from "./InteractiveCard";
+import { SkeletonCard } from "./SkeletonCard";
 import { Button } from "@/components/Button";
+import { Badge } from "@/components/Badge";
 
 export function CardShowcase() {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   return (
     <div className="space-y-12 p-8">
@@ -49,7 +52,14 @@ export function CardShowcase() {
 
       <div>
         <h2 className="text-2xl font-bold mb-6">Hover Effects</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card hoverEffect="none" hoverable>
+            <h3 className="font-semibold mb-2">No Effect</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              No hover animation.
+            </p>
+          </Card>
+
           <Card hoverEffect="lift" hoverable>
             <h3 className="font-semibold mb-2">Lift Effect</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -116,6 +126,7 @@ export function CardShowcase() {
                   Edit
                 </Button>
               }
+              bordered
             />
             <CardBody>
               <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -135,7 +146,7 @@ export function CardShowcase() {
 
           <Card variant="outlined">
             <CardHeader title="Notification Settings" />
-            <CardBody padding="md">
+            <CardBody padding="md" scrollable>
               <div className="space-y-3">
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="rounded" defaultChecked />
@@ -151,7 +162,7 @@ export function CardShowcase() {
                 </label>
               </div>
             </CardBody>
-            <CardFooter justify="between">
+            <CardFooter justify="between" padding="lg">
               <span className="text-xs text-gray-500">Last updated: Today</span>
               <Button size="sm">Update</Button>
             </CardFooter>
@@ -168,6 +179,11 @@ export function CardShowcase() {
             title="Mountain Adventure"
             description="Explore breathtaking mountain views and hiking trails."
             imageHeight="md"
+            actions={
+              <Button size="sm" className="w-full">
+                Learn More
+              </Button>
+            }
           />
 
           <ImageCard
@@ -177,6 +193,12 @@ export function CardShowcase() {
             description="Witness stunning sunsets over the ocean."
             imageHeight="md"
             overlay
+            overlayContent={
+              <div>
+                <h3 className="font-semibold text-lg">Ocean Sunset</h3>
+                <p className="text-sm opacity-90">Perfect evening view</p>
+              </div>
+            }
           />
 
           <ImageCard
@@ -185,44 +207,100 @@ export function CardShowcase() {
             title="Forest Trail"
             description="Discover peaceful forest paths and wildlife."
             imageHeight="md"
-          >
-            <Button size="sm" className="w-full">
-              Learn More
-            </Button>
-          </ImageCard>
+            imagePosition="left"
+            actions={
+              <Button size="sm" variant="outline">
+                Explore
+              </Button>
+            }
+          />
         </div>
       </div>
 
       <div>
         <h2 className="text-2xl font-bold mb-6">Interactive Cards</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {["card-1", "card-2", "card-3"].map((cardId) => (
-            <InteractiveCard
-              key={cardId}
-              selected={selectedCard === cardId}
-              selectable
-              onClick={() => setSelectedCard(cardId)}
-              variant="elevated"
-              ripple
-            >
-              <div className="text-center">
-                <div className="h-12 w-12 mx-auto mb-3 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                  <svg className="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 className="font-semibold mb-2">Option {cardId.split('-')[1]}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Click to select this option with ripple effect.
-                </p>
-              </div>
-            </InteractiveCard>
-          ))}
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Selectable Cards</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {["card-1", "card-2", "card-3"].map((cardId) => (
+                <InteractiveCard
+                  key={cardId}
+                  title={`Option ${cardId.split('-')[1]}`}
+                  description="Click to select this option."
+                  icon={
+                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  }
+                  selected={selectedCard === cardId}
+                  selectable
+                  onSelectionChange={(selected) => setSelectedCard(selected ? cardId : null)}
+                  variant="elevated"
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Expandable Cards</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InteractiveCard
+                title="Expandable Content"
+                description="Click to expand and see more details."
+                expandable
+                expanded={expandedCard === "expand-1"}
+                onExpandChange={(expanded) => setExpandedCard(expanded ? "expand-1" : null)}
+                expandedContent={
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      This is the expanded content that shows additional information
+                      when the card is expanded.
+                    </p>
+                    <div className="flex gap-2">
+                      <Badge color="success">Active</Badge>
+                      <Badge color="info">Premium</Badge>
+                    </div>
+                  </div>
+                }
+              />
+
+              <InteractiveCard
+                title="Status Card"
+                description="Card with status indicator and badge."
+                status="success"
+                badge={<Badge color="success" size="sm">New</Badge>}
+                actions={
+                  <Button size="sm" variant="outline">
+                    View Details
+                  </Button>
+                }
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       <div>
         <h2 className="text-2xl font-bold mb-6">Loading States</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h3 className="text-sm font-medium mb-3">Basic Skeleton</h3>
+            <SkeletonCard size="md" />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium mb-3">With Header & Footer</h3>
+            <SkeletonCard size="md" showHeader showFooter />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium mb-3">With Image</h3>
+            <SkeletonCard size="md" showImage showHeader />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Loading Card Component</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card loading size="sm" />
           <Card loading size="md" />

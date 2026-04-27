@@ -12,8 +12,10 @@ interface SectionCardProps {
   icon?: ReactNode;
   imageUrl?: string;
   variant?: "default" | "elevated" | "outlined" | "glass";
+  hoverEffect?: "none" | "lift" | "glow" | "border";
   hoverable?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 export function SectionCard({ 
@@ -22,8 +24,10 @@ export function SectionCard({
   icon, 
   imageUrl, 
   variant = "default",
+  hoverEffect = "lift",
   hoverable = true,
-  onClick
+  onClick,
+  className = "",
 }: SectionCardProps) {
   const iconElement = imageUrl ? (
     <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-wave/20">
@@ -43,10 +47,11 @@ export function SectionCard({
   return (
     <Card
       variant={variant}
-      hoverEffect="lift"
+      hoverEffect={hoverEffect}
       hoverable={hoverable}
+      interactive={!!onClick}
       onClick={onClick}
-      className="bg-[color:var(--surface)] border-ink/10 shadow-card dark:bg-[color:var(--surface)] dark:border-ink/10 dark:shadow-card"
+      className={`bg-[color:var(--surface)] border-ink/10 shadow-card dark:bg-[color:var(--surface)] dark:border-ink/10 dark:shadow-card ${className}`}
       role="article"
     >
       {iconElement && (
@@ -54,8 +59,10 @@ export function SectionCard({
           {iconElement}
         </div>
       )}
-      <h3 className="text-lg font-semibold text-ink dark:text-ink mb-2">{title}</h3>
-      <p className="text-sm text-ink/70 dark:text-ink/70">{description}</p>
+      <CardBody padding="none">
+        <h3 className="text-lg font-semibold text-ink dark:text-ink mb-2">{title}</h3>
+        <p className="text-sm text-ink/70 dark:text-ink/70">{description}</p>
+      </CardBody>
     </Card>
   );
 }

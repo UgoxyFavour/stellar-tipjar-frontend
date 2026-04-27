@@ -19,5 +19,8 @@ export type { ImageCardProps } from './ImageCard';
 export { InteractiveCard } from './InteractiveCard';
 export type { InteractiveCardProps } from './InteractiveCard';
 
+export { SkeletonCard } from './SkeletonCard';
+export type { SkeletonCardProps } from './SkeletonCard';
+
 // Demo Component
 export { CardShowcase } from './CardShowcase';

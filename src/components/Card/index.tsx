@@ -14,12 +14,13 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   size?: CardSize;
   hoverable?: boolean;
   loading?: boolean;
+  interactive?: boolean;
   children: ReactNode;
 }
 
 const variants: Record<CardVariant, string> = {
   default: "bg-white dark:bg-gray-800 shadow-md border border-gray-200/50 dark:border-gray-700/50",
-  elevated: "bg-white dark:bg-gray-800 shadow-xl border border-gray-200/30 dark:border-gray-700/30",
+  elevated: "bg-white dark:bg-gray-800 shadow-xl border border-gray-200/30 dark:border-gray-700/30 hover:shadow-2xl",
   outlined: "bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-sm",
   glass: "backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-700/30 shadow-lg",
 };
@@ -28,7 +29,7 @@ const hoverEffects: Record<CardHoverEffect, string> = {
   none: "",
   lift: "hover:-translate-y-1 hover:shadow-xl",
   glow: "hover:shadow-2xl hover:shadow-purple-500/10 dark:hover:shadow-purple-400/20",
-  border: "hover:border-purple-400 dark:hover:border-purple-500",
+  border: "hover:border-purple-400 dark:hover:border-purple-500 hover:border-2",
 };
 
 const sizes: Record<CardSize, string> = {
@@ -58,13 +59,26 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
     size = "md",
     hoverable = false,
     loading = false,
+    interactive = false,
     onClick,
+    onKeyDown,
+    tabIndex,
+    role,
     ...props
   },
   ref
 ) {
   const prefersReduced = useReducedMotion();
-  const isClickable = !!onClick || hoverable;
+  const isClickable = !!onClick || hoverable || interactive;
+
+  // Handle keyboard interaction for interactive cards
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isClickable && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick?.(e as any);
+    }
+    onKeyDown?.(e);
+  };
 
   if (loading) {
     return (
@@ -89,11 +103,14 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
     <div
       ref={ref}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={isClickable ? (tabIndex ?? 0) : tabIndex}
+      role={role || (isClickable ? "button" : undefined)}
       className={[
         variants[variant],
         sizes[size],
         "transition-all duration-300",
-        isClickable && "cursor-pointer",
+        isClickable && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2",
         !prefersReduced && hoverEffect !== "none" && hoverEffects[hoverEffect],
         className,
       ]
